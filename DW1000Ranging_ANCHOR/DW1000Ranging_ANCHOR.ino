@@ -117,12 +117,30 @@ void loop() {
       isCalibrating = true;
       calibratedValue = 0;
     }
+    if(isCalibrating == true){
+      digitalWrite(RELAY_PIN, HIGH);
+      delay(800);
+      digitalWrite(RELAY_PIN, LOW);
+
+      delay(10000);
+
+      digitalWrite(RELAY_PIN, HIGH);
+      delay(800);
+      digitalWrite(RELAY_PIN, LOW);
+      
+      isCalibrated = true;
+      isCalibrating = false;
+      calibrationCounter = 0;
+      bluetoothCalibration = false;
+      Serial.print("*");Serial.print("#");
+      isCalibrated = true;
+    }
   }else{
     calibrationTriggerCounter = 0;
-  }
-
-  if(bluetooth.available()> 0){
-    checkForBTData(bluetooth.read());
+  
+    if(bluetooth.available()> 0){
+      checkForBTData(bluetooth.read());
+    }
   }
 }
 
@@ -133,9 +151,6 @@ void newRange() {
   if(isCalibrating){
     if(calibrationCounter == 0) {
       //Serial.print("#");Serial.println("CALIBRATION STARTED.......");Serial.println(calibratedValue);
-      digitalWrite(RELAY_PIN, HIGH);
-      delay(800);
-      digitalWrite(RELAY_PIN, LOW);
     }
     calibrationAry[calibrationCounter%CALIBRATION_SIZE] = DW1000Ranging.getDistantDevice()->getRange();
     //Serial.println(calibrationAry[calibrationCounter%CALIBRATION_SIZE]);
